@@ -72,7 +72,7 @@ public class PinBall : MonoBehaviour
     {
         Vector3 pointTo = new Vector3(0, 0, 1);
 
-        rigidBody.AddForce(Mathf.Clamp(rollPower + holdTime * 3f, rollPower * 3f, rollPower * 5f) * pointTo, ForceMode.Impulse);
+        rigidBody.AddForce(Mathf.Clamp(rollPower + holdTime * 30f, rollPower * 3f, rollPower * 5f) * pointTo, ForceMode.Impulse);
         roll = false;
         isRolling = true;
         holdTime = 0f;
