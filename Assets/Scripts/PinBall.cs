@@ -22,6 +22,7 @@ public class PinBall : MonoBehaviour
     public float rollPower = 30f;
     public float holdTime = 0;
     public bool isRolling = false;
+    public bool canLaunch = false;
 
     void Start()
     {
@@ -38,7 +39,7 @@ public class PinBall : MonoBehaviour
 
     void Update()
     {
-        if (isRolling == true)
+        if (canLaunch == false)
         {
             return;
         }
@@ -80,6 +81,8 @@ public class PinBall : MonoBehaviour
         roll = false;
         isRolling = true;
         holdTime = 0f;
+
+        canLaunch = false;
     }
 
 
@@ -91,6 +94,7 @@ public class PinBall : MonoBehaviour
         if (other.CompareTag("Reset") && isRolling)
         {
             ballLeft -= 1;
+            ballLeftText.text = Mathf.Max(0, ballLeft).ToString("D2");
 
             if (ballLeft >= 0)
             {
@@ -106,7 +110,19 @@ public class PinBall : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
-        ballLeftText.text = Mathf.Max(0, ballLeft).ToString("D2");
+        if (other.CompareTag("LaunchZone"))
+        {
+            canLaunch = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("LaunchZone"))
+        {
+            canLaunch = false;
+            holdingButt = false;
+            holdTime = 0f;
+        }
     }
 
 
@@ -116,6 +132,7 @@ public class PinBall : MonoBehaviour
         rigidBody.angularVelocity = Vector3.zero;
         transform.position = startPosition;
         isRolling = false;
+        canLaunch = true;
 
         scoreText.text = "Score: " + score;
     }
