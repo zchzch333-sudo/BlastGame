@@ -12,7 +12,8 @@ public class PinBall : MonoBehaviour
     bool holdingButt;
     bool roll;
     public TMP_Text scoreText;
-
+    public TMP_Text ballLeftText;
+    public static int ballLeft = 20;
     Vector3[] startPositions;
     Quaternion[] startRotations;
     int score;
@@ -24,11 +25,14 @@ public class PinBall : MonoBehaviour
 
     void Start()
     {
+        ballLeft = 20;
+
         rigidBody = GetComponent<Rigidbody>();
         rollButt = InputSystem.actions.FindAction("Roll");
         startPosition = transform.position;
 
         scoreText.text = "Score: 0";
+        ballLeftText.text = ballLeft.ToString("D2");
     }
 
 
@@ -81,12 +85,28 @@ public class PinBall : MonoBehaviour
 
 
 
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Reset"))
+        if (other.CompareTag("Reset") && isRolling)
         {
-            ResetBall();
+            ballLeft -= 1;
+
+            if (ballLeft >= 0)
+            {
+                ResetBall();
+            }
+            else
+            {
+                if (ballLeft == -2)
+                {
+                    EndGame();
+                }
+
+                gameObject.SetActive(false);
+            }
         }
+        ballLeftText.text = Mathf.Max(0, ballLeft).ToString("D2");
     }
 
 
@@ -98,5 +118,9 @@ public class PinBall : MonoBehaviour
         isRolling = false;
 
         scoreText.text = "Score: " + score;
+    }
+    void EndGame()
+    {
+
     }
 }
