@@ -12,13 +12,15 @@ public class PinBall : MonoBehaviour
 
     bool holdingButt;
     bool roll;
-    public TMP_Text scoreText;
     public TMP_Text ballLeftText;
     public static int ballLeft = 20;
     Vector3[] startPositions;
     Quaternion[] startRotations;
     int score;
     Vector3 startPosition;
+    public Material normalMaterial;
+    public Material blastMaterial;
+    Renderer ballRenderer;
 
     public float rollPower = 30f;
     public float holdTime = 0;
@@ -47,7 +49,6 @@ public class PinBall : MonoBehaviour
         rollButt = InputSystem.actions.FindAction("Roll");
         startPosition = transform.position;
 
-        scoreText.text = "Score: 0";
         ballLeftText.text = ballLeft.ToString("D2");
 
         blastValue = 0f;
@@ -56,6 +57,9 @@ public class PinBall : MonoBehaviour
         gameOverUI.SetActive(false);
         blastValueBar.fillAmount = 0f;
         float blastEndTime = 0f;
+
+        ballRenderer = GetComponent<Renderer>();
+        ballRenderer.material = normalMaterial;
     }
 
 
@@ -75,11 +79,22 @@ public class PinBall : MonoBehaviour
                 blastMode = false;
                 blastValue = 0f;
                 blastModeBlock.SetActive(false);
+
             }
         }
 
+
         blastValueBar.fillAmount = blastValue / blastValueMax;
         blastModeBlock.SetActive(blastMode);
+
+        if (blastMode == true && ballRenderer.sharedMaterial != blastMaterial)
+        {
+            ballRenderer.sharedMaterial = blastMaterial;
+        }
+        else if (blastMode == false && ballRenderer.sharedMaterial != normalMaterial)
+        {
+            ballRenderer.sharedMaterial = normalMaterial;
+        }
 
 
         if (canLaunch == false)
@@ -101,6 +116,7 @@ public class PinBall : MonoBehaviour
         {
             holdTime += Time.deltaTime;
         }
+
     }
 
 
@@ -201,7 +217,6 @@ public class PinBall : MonoBehaviour
         isRolling = false;
         canLaunch = true;
 
-        scoreText.text = "Score: " + score;
     }
     void BlastMode()
     {
