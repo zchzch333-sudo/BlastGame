@@ -10,12 +10,14 @@ public class Boss : MonoBehaviour
     float maxBossLife;
 
     public Image bossHealthBar;
+    public GameObject winUI;
 
 
     void Start()
     {
         maxBossLife = bossLife;
         bossHealthBar.fillAmount = 1f;
+        winUI.SetActive(false);
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -41,6 +43,8 @@ public class Boss : MonoBehaviour
     }
     void WinGame()
     {
+        winUI.SetActive(true);
+        Time.timeScale = 0f;
 
     }
 }

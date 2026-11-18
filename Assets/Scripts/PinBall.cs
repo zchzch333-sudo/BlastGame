@@ -37,6 +37,7 @@ public class PinBall : MonoBehaviour
     static float blastEndTime;
 
     public float blastSpeed = 20f;
+    public GameObject gameOverUI;
 
     void Start()
     {
@@ -52,6 +53,7 @@ public class PinBall : MonoBehaviour
         blastValue = 0f;
         blastMode = false;
         blastModeBlock.SetActive(false);
+        gameOverUI.SetActive(false);
         blastValueBar.fillAmount = 0f;
         float blastEndTime = 0f;
     }
@@ -209,6 +211,8 @@ public class PinBall : MonoBehaviour
     }
     void EndGame()
     {
+        gameOverUI.SetActive(true);
+        Time.timeScale = 0f;
 
     }
 }
