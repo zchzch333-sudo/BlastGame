@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.UI;
 
 public class PinBall : MonoBehaviour
 {
@@ -24,6 +25,19 @@ public class PinBall : MonoBehaviour
     public bool isRolling = false;
     public bool canLaunch = false;
 
+    public static float blastValue = 0f;
+    public float blastValueMax = 100f;
+
+    public Image blastValueBar;
+
+    public static bool blastMode = false;
+    public GameObject blastModeBlock;
+
+    public float blastTime = 6f;
+    static float blastEndTime;
+
+    public float blastSpeed = 20f;
+
     void Start()
     {
         ballLeft = 20;
@@ -34,11 +48,38 @@ public class PinBall : MonoBehaviour
 
         scoreText.text = "Score: 0";
         ballLeftText.text = ballLeft.ToString("D2");
+
+        blastValue = 0f;
+        blastMode = false;
+        blastModeBlock.SetActive(false);
+        blastValueBar.fillAmount = 0f;
+        float blastEndTime = 0f;
     }
 
 
     void Update()
     {
+        if (blastValue >= blastValueMax && blastMode == false)
+        {
+            BlastMode();
+        }
+
+        if (blastMode == true)
+        {
+            blastValue = Mathf.Max(0f, (blastEndTime - Time.time) / blastTime * blastValueMax);
+
+            if (Time.time >= blastEndTime)
+            {
+                blastMode = false;
+                blastValue = 0f;
+                blastModeBlock.SetActive(false);
+            }
+        }
+
+        blastValueBar.fillAmount = blastValue / blastValueMax;
+        blastModeBlock.SetActive(blastMode);
+
+
         if (canLaunch == false)
         {
             return;
@@ -72,6 +113,15 @@ public class PinBall : MonoBehaviour
         {
             rigidBody.AddForce(Vector3.down * 40f, ForceMode.Acceleration);
         }
+
+        if (blastMode == true && isRolling == true)
+        {
+            if (rigidBody.linearVelocity.magnitude < blastSpeed &&
+                rigidBody.linearVelocity.magnitude > 0.1f)
+            {
+                rigidBody.linearVelocity = rigidBody.linearVelocity.normalized * blastSpeed;
+            }
+        }
     }
     void StartRoll()
     {
@@ -87,7 +137,22 @@ public class PinBall : MonoBehaviour
 
 
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (blastMode) return;
 
+        if (collision.gameObject.CompareTag("Bumper"))
+        {
+            blastValue += 5f;
+        }
+
+        if (collision.gameObject.CompareTag("Boss"))
+        {
+            blastValue += 10f;
+        }
+
+        blastValue = Mathf.Clamp(blastValue, 0f, blastValueMax);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -135,6 +200,12 @@ public class PinBall : MonoBehaviour
         canLaunch = true;
 
         scoreText.text = "Score: " + score;
+    }
+    void BlastMode()
+    {
+        blastMode = true;
+        blastEndTime = Time.time + blastTime;
+        blastModeBlock.SetActive(true);
     }
     void EndGame()
     {
