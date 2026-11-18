@@ -275,7 +275,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &137714830
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2348,7 +2348,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Boss
   bouncePower: 15
-  bossLife: 30
+  bossLife: 20
   bossHealthBar: {fileID: 510093321}
   winUI: {fileID: 680435456}
 --- !u!1001 &884172046
